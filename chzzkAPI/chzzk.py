@@ -19,7 +19,7 @@ class Chzzk(object):
         
     def is_streamer_live(self) -> bool:
         self._get_live_status()
-        if self.live_status['code'] == Status.OK.value and self.live_status['content'] is not None:
+        if self.live_status['code'] == Status.OK.value and self.live_status['content'] is not None and self.live_status['content']['status'] == 'OPEN':
             return True
         return False
     
@@ -39,6 +39,11 @@ class Chzzk(object):
     def get_live_link(self):
         return 'https://chzzk.naver.com/live/' + self.user_id
     
-
+    def get_live_id(self):
+        self._get_live_detail()
+        if self.live_detail['content'] is not None:
+            return self.live_detail['content']['liveId']
+        else:
+            return None
     
  

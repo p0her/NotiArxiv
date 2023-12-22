@@ -11,7 +11,7 @@ class DiscordBot(object):
         webhook_message['avatar_url'] = streamer_profile_image_url
         webhook_message['embeds'] = [
             {
-                'title': f'{chzzk.get_live_title()}', # hyperlink markdown
+                'title': f'{chzzk.get_live_title()}',
                 'url': f'{chzzk.get_live_link()}',
                 'image': {
                     'url': chzzk.get_live_thumbnail()

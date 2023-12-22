@@ -30,11 +30,13 @@ class Chzzk(object):
 
     def get_live_thumbnail(self):
         self._get_live_detail()
-        return self.live_detail['content']['liveImageUrl'].replace('{type}', '720')
+        if self.live_detail['content'] is not None:
+            return self.live_detail['content']['liveImageUrl'].replace('{type}', '720')
     
     def get_live_title(self):
         self._get_live_detail()
-        return self.live_detail['content']['liveTitle']
+        if self.live_detail['content'] is not None:
+            return self.live_detail['content']['liveTitle']
     
     def get_live_link(self):
         return 'https://chzzk.naver.com/live/' + self.user_id
@@ -45,5 +47,13 @@ class Chzzk(object):
             return self.live_detail['content']['liveId']
         else:
             return None
+        
+    def get_live_user_count(self):
+        self._get_live_detail()
+        if self.live_detail['content'] is not None:
+            return self.live_detail['content']['concurrentUserCount']
+        else:
+            return None
+        
     
  

@@ -54,6 +54,3 @@ class Chzzk(object):
             return self.live_detail['content']['concurrentUserCount']
         else:
             return None
-        
-    
- 

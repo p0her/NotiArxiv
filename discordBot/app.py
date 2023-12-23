@@ -34,4 +34,3 @@ class DiscordBot(object):
     
     def send_cafe_announcement(self):
         None
-    

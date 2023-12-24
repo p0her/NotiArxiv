@@ -11,16 +11,16 @@ class BaseModel(Model):
 class User(BaseModel):
     webhook_url = CharField()
 
-db.connect()
-
 async def main():
     tasks = []
+    db.connect()
     for i,user in enumerate(User.select()):
         noti = ArxiVNotification(user.webhook_url)
         tasks.append(asyncio.create_task(noti.run()))
 
     for task in tasks:
         await task
+    db.close()
     
 if __name__ == '__main__':
     while True:

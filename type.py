@@ -1,7 +1,7 @@
 from enum import Enum
 
 class UserID(Enum):
-    ID_HANGYEOL = '0dad8baf12a436f722faa8e5001c5011'
+    ID_HANGYEOL = '9f16e0bfbb7a9ee1fdabce002047b82b'
     ID_YEORUMI = '726482d31891e0808d6289e2497791fc'
     ID_BEEMONG = '39c3d49d1e1becc865f42ee251329766'
     ID_U32 = '60ddec4bc4beab3fbf4f7c2d1aa7d70d'

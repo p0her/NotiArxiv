@@ -35,7 +35,17 @@ class ArxiVNotification(object):
         f.close()
         await asyncio.sleep(REQUEST_TIME)
 
-    def cafe_run(self):
+    async def cafe_run(self):
         f = open('./cafe_log.txt', 'r+')
-        self.cafe.get_announcement()
+        dictName = {'한결':'HANGYEOL', '여르미':'YEORUMI', '비몽':'BEEMONG', '우사미':'U32', '에뇨':'ENYO', '샤르망':'CHARMANTE'}
+        enc = hashlib.md5()
+        log_lines = f.readlines()
+        announcement = self.cafe.get_announcement()[0]
+        print(announcement[0])
+        enc.update(str(announcement[0] + announcement[1] + announcement[2]).encode())
+        x = enc.hexdigest()
+        if x not in log_lines:
+            self.bot.send_cafe_announcement(announcement[1], announcement[2], announcement[0], getattr(ProfileUrl,dictName.get(announcement[0])).value)
+            f.write(x+'\n')
         f.close()
+        await asyncio.sleep(REQUEST_TIME)

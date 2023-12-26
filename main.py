@@ -16,15 +16,13 @@ async def main():
     db.connect()
     for i,user in enumerate(User.select()):
         noti = ArxiVNotification(user.webhook_url)
-        tasks.append(asyncio.create_task(noti.discord_run()))
+        tasks.append(asyncio.create_task(noti.cafe_run()))
 
     for task in tasks:
         await task
     db.close()
     
 if __name__ == '__main__':
-    #while True:
-    #    asyncio.run(main())
+    while True:
+        asyncio.run(main())
 
-    noti = ArxiVNotification('asdf')
-    noti.cafe_run()

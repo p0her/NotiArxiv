@@ -23,3 +23,6 @@ class ProfileUrl(Enum):
     U32 = 'https://pbs.twimg.com/profile_images/1721162598081789952/3-KTR_a2_400x400.jpg'
     ENYO = 'https://pbs.twimg.com/profile_images/1737478829466116096/XkByc9HR_400x400.jpg'
     CHARMANTE = 'https://pbs.twimg.com/profile_images/1727610264521187328/dx0NRpMT_400x400.jpg'
+
+
+    

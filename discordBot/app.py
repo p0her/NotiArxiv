@@ -32,5 +32,20 @@ class DiscordBot(object):
         '''
         return None
     
-    def send_cafe_announcement(self):
-        None
+    def send_cafe_announcement(self, title: str, url: str, streamer_name: str, streamer_profile_image_url: str) -> bool:
+        webhook_message = {}
+        webhook_message['username'] = '[알림] ' + streamer_name
+        webhook_message['avatar_url'] = streamer_profile_image_url
+        webhook_message['embeds'] = [
+            {
+                'title': f'{title}',
+                'url': f'{url}',
+            }
+        ]
+        print(webhook_message)
+        res = requests.post(self.webhook_url,json=webhook_message)
+        if res.status_code == Status.NO_CONTENT:
+            return True
+        else:
+            return False
+        

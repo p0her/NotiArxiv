@@ -24,5 +24,10 @@ class ProfileUrl(Enum):
     ENYO = 'https://pbs.twimg.com/profile_images/1737478829466116096/XkByc9HR_400x400.jpg'
     CHARMANTE = 'https://pbs.twimg.com/profile_images/1727610264521187328/dx0NRpMT_400x400.jpg'
 
-
-    
+class colorID(Enum):
+    HANGYEOL = 0xfeb9c6
+    YEORUMI = 0x5884ff
+    BEEMONG = 0xbfd4e7
+    U32 = 0xda3396
+    ENYO = 0x53493e
+    CHARMANTE = 0x5f4f7c

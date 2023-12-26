@@ -1,6 +1,7 @@
 from chzzkAPI.type import Status
 from chzzkAPI.chzzk import Chzzk
 import requests
+import discord
 
 class DiscordBot(object):
     def __init__(self, webhook_url: str) -> None:
@@ -32,14 +33,18 @@ class DiscordBot(object):
         '''
         return None
     
-    def send_cafe_announcement(self, title: str, url: str, streamer_name: str, streamer_profile_image_url: str) -> bool:
+    def send_cafe_announcement(self, color_id: int, title: str, name:str, url: str, streamer_name: str, streamer_profile_image_url: str) -> bool:
         webhook_message = {}
         webhook_message['username'] = '[알림] ' + streamer_name
         webhook_message['avatar_url'] = streamer_profile_image_url
         webhook_message['embeds'] = [
             {
+                'color': str(color_id),
                 'title': f'{title}',
-                'url': f'{url}',
+                'author': {
+                    'name': f'{name}',
+                    'url': f'{url}'
+                },
             }
         ]
         print(webhook_message)

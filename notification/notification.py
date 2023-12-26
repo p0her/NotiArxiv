@@ -2,17 +2,16 @@ import time
 import hashlib
 import asyncio
 from chzzkAPI.chzzk import Chzzk
-from cafeAPI.cafe import Cafe
-from type import UserID, UserName, ProfileUrl
+from type import UserID, UserName, ProfileUrl, colorID
 from discordBot.app import DiscordBot
 
 REQUEST_TIME = 10
 
 class ArxiVNotification(object):
-    def __init__(self, webhook_url: str):
+    def __init__(self, webhook_url: str, cafe):
         self.members = [Chzzk(x.value) for x in UserID] 
         self.bot = DiscordBot(webhook_url)
-        self.cafe = Cafe()
+        self.cafe = cafe
         self.webhook_url = webhook_url
 
     async def discord_run(self):
@@ -40,12 +39,11 @@ class ArxiVNotification(object):
         dictName = {'한결':'HANGYEOL', '여르미':'YEORUMI', '비몽':'BEEMONG', '우사미':'U32', '에뇨':'ENYO', '샤르망':'CHARMANTE'}
         enc = hashlib.md5()
         log_lines = f.readlines()
-        announcement = self.cafe.get_announcement()[0]
-        print(announcement[0])
-        enc.update(str(announcement[0] + announcement[1] + announcement[2]).encode())
+        announcement = self.cafe.get_announcement()
+        enc.update(str(announcement[0] + announcement[1] + announcement[2] + self.webhook_url).encode())
         x = enc.hexdigest()
-        if x not in log_lines:
-            self.bot.send_cafe_announcement(announcement[1], announcement[2], announcement[0], getattr(ProfileUrl,dictName.get(announcement[0])).value)
+        if x+'\n' not in log_lines:
+            self.bot.send_cafe_announcement(getattr(colorID, dictName.get(announcement[0])).value, '📺 방송 공지', announcement[1], announcement[2], announcement[0], getattr(ProfileUrl,dictName.get(announcement[0])).value)
             f.write(x+'\n')
         f.close()
         await asyncio.sleep(REQUEST_TIME)

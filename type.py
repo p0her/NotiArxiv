@@ -36,3 +36,11 @@ class AfreecaUserID(Enum):
     HANGYEOL = 'kaksjak0730'
     YEORUMI = 'yeorumi030'
     BEEMONG = 'beemong'
+
+class TwitchUserID(Enum):
+    HANGYEOL = 'hangyeol8008'
+    YEORUMI = 'yeorumi030'
+    BEEMONG = 'beemong_'
+    U32 = 'u32__'
+    ENYO = 'enyo_sekai'
+    CHARMANTE = '0owo0__'

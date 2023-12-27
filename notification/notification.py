@@ -4,7 +4,8 @@ import asyncio
 from chzzkAPI.chzzk import Chzzk
 from afreecaAPI.afreeca import Afreeca
 from cafeAPI.cafe import Cafe
-from type import UserID, UserName, ProfileUrl, ColorID, AfreecaUserID
+from twitchAPI.twitch import Twitch
+from type import UserID, UserName, ProfileUrl, ColorID, AfreecaUserID, TwitchUserID
 from discordBot.app import DiscordBot
 
 REQUEST_TIME = 10
@@ -15,6 +16,7 @@ class ArxiVNotification(object):
         self.bot = DiscordBot(webhook_url)
         self.cafe = cafe
         self.afreeca = [Afreeca(x.value) for x in AfreecaUserID]
+        self.twitch = [Twitch(x.value) for x in TwitchUserID]
         self.webhook_url = webhook_url
 
     async def discord_run(self):
@@ -69,4 +71,9 @@ class ArxiVNotification(object):
             await asyncio.sleep(REQUEST_TIME)
 
     async def twitch_run(self):
+        f = open('./twitch_log.txt', 'r+')
+        enc = hashlib.md5()
+        log_liens = f.readlines()
+        for member, streamer_name in zip(self.twitch, UserName):
+
         None

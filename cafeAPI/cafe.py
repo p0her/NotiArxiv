@@ -1,8 +1,5 @@
-import re
 from selenium import webdriver
 from bs4 import BeautifulSoup
-from typing import Self
-from urllib import parse
 from requests.utils import requote_uri
 from .helper import get_stream_announcement_url
 

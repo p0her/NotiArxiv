@@ -1,5 +1,4 @@
 import re
-import requests
 from selenium import webdriver
 from bs4 import BeautifulSoup
 from typing import Self

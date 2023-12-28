@@ -1,6 +1,5 @@
 from selenium import webdriver
 from bs4 import BeautifulSoup
-from requests.utils import requote_uri
 from .helper import get_stream_announcement_url
 
 class Cafe:
@@ -13,7 +12,7 @@ class Cafe:
     def driver_close(self):
         self.driver.quit()
         
-    def get_announcement(self):
+    def get_announcement(self) -> (str, str, str):
         self.driver.get(self.announcement_url)
         self.driver.switch_to.frame('cafe_main')
         soup = BeautifulSoup(self.driver.page_source, 'html.parser')
@@ -27,7 +26,6 @@ class Cafe:
         title = article_title[1].split('\n')[-1].strip()
         link = link.replace('&', '%26').replace('?', '%3F').replace('=', '%3D')
         link = 'https://cafe.naver.com/godanssity?iframe_url_utf8=' + link
-        return [writer, title, link]
-
+        return writer, title, link
 
             

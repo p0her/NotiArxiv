@@ -5,75 +5,144 @@ from chzzkAPI.chzzk import Chzzk
 from afreecaAPI.afreeca import Afreeca
 from cafeAPI.cafe import Cafe
 from twitchAPI.twitch import Twitch
-from type import UserID, UserName, ProfileUrl, ColorID, AfreecaUserID, TwitchUserID
+from type import ChzzkUserID, UserName, ProfileUrl, ColorID, AfreecaUserID, TwitchUserID
 from discordBot.app import DiscordBot
 
 REQUEST_TIME = 10
 
 class ArxiVNotification(object):
-    def __init__(self, webhook_url: str, cafe: Cafe, afreeca: Afreeca):
-        self.members = [Chzzk(x.value) for x in UserID] 
+    def __init__(self, webhook_url: str):
+        self.chzzk = Chzzk()
         self.bot = DiscordBot(webhook_url)
-        self.cafe = cafe
-        self.afreeca = [Afreeca(x.value) for x in AfreecaUserID]
-        self.twitch = [Twitch(x.value) for x in TwitchUserID]
+        self.cafe = Cafe()
+        self.afreeca = Afreeca()
+        self.twitch = Twitch()
         self.webhook_url = webhook_url
+        self.color = ColorID
+        self.dictName = {'한결':'HANGYEOL', '여르미':'YEORUMI', '비몽':'BEEMONG', '우사미':'U32', '에뇨':'ENYO', '샤르망':'CHARMANTE'}
+        self.twitch_id = [x.value for x in TwitchUserID]
+        self.afreeca_id = [x.value for x in AfreecaUserID]
+        self.chzzk_id = [x.value for x in ChzzkUserID]
 
-    async def discord_run(self):
-        f = open('./live_log.txt', 'r+') 
-        enc = hashlib.md5()
-        log_lines = f.readlines()
-        for member, streamer_name, profile_url in zip(self.members, UserName, ProfileUrl):
-            if member.is_streamer_live() and member.get_live_id() is not None:
-                enc.update(str(member.get_live_id()).encode())
-                member_live_id = enc.hexdigest()
-                is_logging = True
-                for log_line in log_lines:
-                    t = log_line.split(' ')
-                    if self.webhook_url == t[0] and t[1].strip() == member_live_id:
-                        is_logging = False
-                        break
-                if is_logging:
-                    self.bot.send_stream_on_message(member.user_id, streamer_name.value, profile_url.value)
-                    f.write(self.webhook_url + ' ' + member_live_id + '\n')
-        f.close()
-        await asyncio.sleep(REQUEST_TIME)
-
-    async def cafe_run(self):
-        f = open('./cafe_log.txt', 'r+')
-        dictName = {'한결':'HANGYEOL', '여르미':'YEORUMI', '비몽':'BEEMONG', '우사미':'U32', '에뇨':'ENYO', '샤르망':'CHARMANTE'}
-        enc = hashlib.md5()
-        log_lines = f.readlines()
-        announcement = self.cafe.get_announcement()
-        enc.update(str(announcement[0] + announcement[1] + announcement[2] + self.webhook_url).encode())
-        x = enc.hexdigest()
-        if x+'\n' not in log_lines:
-            self.bot.send_cafe_announcement(getattr(ColorID, dictName.get(announcement[0])).value, '📺 방송 공지', announcement[1], announcement[2], announcement[0], getattr(ProfileUrl,dictName.get(announcement[0])).value)
-            f.write(x+'\n')
-        f.close()
-        await asyncio.sleep(REQUEST_TIME)
-
-    async def afreeca_run(self):
-        f = open('./afreeca_log.txt', 'r+')
-        enc = hashlib.md5()
-        log_lines = f.readlines()
-        for member, streamer_name in zip(self.afreeca, UserName):
-            broad_title = member.get_broad_title()
-            broad_no = member.get_broad_no()
-            current_sum_viewer = member.get_broad_current_viewer()
-            broad_url = member.get_broad_url()
-            enc.update(str(broad_no).encode() + self.webhook_url.encode())
-            x = enc.hexdigest()
-            if x+'\n' not in log_lines:
-                self.bot.send_afreeca_live_on_message()
-                f.write(x+'\n')
-            f.close()
-            await asyncio.sleep(REQUEST_TIME)
-
-    async def twitch_run(self):
-        f = open('./twitch_log.txt', 'r+')
-        enc = hashlib.md5()
-        log_liens = f.readlines()
-        for member, streamer_name in zip(self.twitch, UserName):
-
+    def generate_noti_message(self, name, avatar_url, title, description, stream_url, color, image_url):
+        webhook_message = {}
+        webhook_message['username'] = name
+        webhook_message['avatar_url'] = avatar_url
+        webhook_message['embeds'] = [
+            {
+                'title': f'{title}',
+                'description': f'{description}',
+                'url': f'{stream_url}',
+                'color': color,
+                'image': {
+                    'url': f'{image_url}'
+                }
+            }
+        ]
+        return webhook_message
+    
+    def get_cafe_noti_message(self):
         None
+
+    def get_chzzk_noti_message(self):
+        is_live = [0 for i in range(len(self.chzzk_id))]
+        titles = ['' for i in range(len(self.chzzk_id))]
+        viewer_counts = [0 for i in range(len(self.chzzk_id))]
+        broad_urls = ['' for i in range(len(self.chzzk_id))]
+        thumbnail_urls = ['' for i in range(len(self.chzzk_id))]
+        ret = [False for i in range(len(self.chzzk_id))]
+        idx = [i for i in range(len(self.chzzk_id))]
+
+        for i, user_id in enumerate(self.chzzk_id):
+            if self.chzzk.is_streamer_live(user_id):
+                is_live[i] = True
+                
+        for i, user_id in enumerate(self.chzzk_id):
+            if not is_live[i]: continue
+            titles[i] = self.chzzk.get_live_title(user_id)
+            viewer_counts[i] = self.chzzk.get_live_user_count(user_id)
+            broad_urls[i] = self.chzzk.get_live_link(user_id)
+            thumbnail_urls[i] = self.chzzk.get_live_thumbnail(user_id)
+
+        for (i, user_id, name, color, avatar_url) in zip(idx, self.chzzk_id, UserName, self.color, ProfileUrl):
+            if not is_live[i]: continue
+            ret[i] = self.generate_noti_message(name.value, avatar_url.value, f'{name.value} 뱅온', titles[i], broad_urls[i], color.value, thumbnail_urls[i])
+        
+        return ret
+
+    def get_afreeca_noti_message(self):
+        is_live = [0 for i in range(len(self.afreeca_id))]
+        titles = ['' for i in range(len(self.afreeca_id))]
+        viewer_counts = [0 for i in range(len(self.afreeca_id))]
+        broad_urls = ['' for i in range(len(self.afreeca_id))]
+        thumbnail_urls = ['' for i in range(len(self.afreeca_id))]
+        ret = [False for i in range(len(self.afreeca_id))]
+        idx = [i for i in range(len(self.afreeca_id))]
+
+        for i, user_id in enumerate(self.afreeca_id):
+            if self.afreeca.is_bj_live(user_id):
+                is_live[i] = True
+
+        for i, user_id in enumerate(self.afreeca_id):
+            if not is_live[i]: continue
+            titles[i] = self.afreeca.get_broad_title(user_id)
+            viewer_counts[i] = self.afreeca.get_broad_current_viewer(user_id)
+            broad_urls[i] = self.afreeca.get_broad_url(user_id)
+            thumbnail_urls[i] = self.afreeca.get_thumbnail_url(user_id)
+
+        for (i, user_id, name, color, avatar_url) in zip(idx, self.afreeca_id, UserName, self.color, ProfileUrl):
+            if not is_live[i]: continue
+            ret[i] = self.generate_noti_message(name.value, avatar_url.value, f'{name.value} 뱅온', titles[i], broad_urls[i], color.value, thumbnail_urls[i])
+        
+        return ret
+    
+    def get_twitch_noti_message(self):
+        is_live = [0 for i in range(len(self.twitch_id))]
+        titles = ['' for i in range(len(self.twitch_id))]
+        viewer_counts = [0 for i in range(len(self.twitch_id))]
+        broad_urls = ['' for i in range(len(self.twitch_id))]
+        thumbnail_urls = ['' for i in range(len(self.twitch_id))]
+        ret = [False for i in range(len(self.twitch_id))]
+        idx = [i for i in range(len(self.twitch_id))]
+
+        for i, user_id in enumerate(self.twitch_id):
+            if self.twitch.is_stream(user_id):
+                is_live[i] = True
+
+        for i, user_id in enumerate(self.twitch_id):
+            if not is_live[i]: continue
+            stream_information = self.twitch.get_stream_information(user_id)[0]
+            titles[i] = self.twitch.get_title(stream_information)
+            viewer_counts[i] = self.twitch.get_viewer_count(stream_information)
+            broad_urls[i] = self.twitch.get_broad_url(user_id)
+            thumbnail_urls[i] = self.twitch.get_thumbnail_url(stream_information)
+
+        for (i, user_id, name, color, avatar_url) in zip(idx, self.twitch_id, UserName, self.color, ProfileUrl):
+            if not is_live[i]: continue
+            ret[i] = self.generate_noti_message(name.value, avatar_url.value, f'{name.value} 뱅온', titles[i], broad_urls[i], color.value, thumbnail_urls[i])
+
+        return ret
+    
+    def twitch_noti_run(self):
+        twitch_noti_message = self.get_twitch_noti_message()
+        for x in twitch_noti_message:
+            if x is not False:
+                self.bot.send_twitch_live_on_message(x)
+
+    def chzzk_noti_run(self):
+        chzzk_noti_message = self.get_chzzk_noti_message()
+        for x in chzzk_noti_message:
+            if x is not False:
+                self.bot.send_chzzk_live_on_message(x)
+
+    def afreeca_noti_run(self):
+        afreeca_noti_message = self.get_afreeca_noti_message()
+        for x in afreeca_noti_message:
+            if x is not False:
+                self.bot.send_afreeca_live_on_message(x)
+            
+    def run(self):
+        #self.cafe_noti_run() 
+        self.chzzk_noti_run()
+        self.afreeca_noti_run()
+        self.twitch_noti_run()

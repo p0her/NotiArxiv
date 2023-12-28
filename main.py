@@ -1,6 +1,9 @@
 from notification.notification import ArxiVNotification
 from peewee import SqliteDatabase, Model, CharField
 from cafeAPI.cafe import Cafe
+from twitchAPI.twitch import Twitch
+from afreecaAPI.afreeca import Afreeca
+from chzzkAPI.chzzk import Chzzk
 import asyncio
 
 db = SqliteDatabase('arxiv_database.db')
@@ -12,19 +15,7 @@ class BaseModel(Model):
 class User(BaseModel):
     webhook_url = CharField()
 
-async def main():
-    cafe = Cafe()
-    tasks = []
-    db.connect()
-    for i,user in enumerate(User.select()):
-        noti = ArxiVNotification(user.webhook_url, cafe)
-        tasks.append(asyncio.create_task(noti.cafe_run()))
-    for task in tasks:
-        await task
-    cafe.driver_close()
-    db.close()
-    
 if __name__ == '__main__':
-    while True:
-        asyncio.run(main())
+    noti = ArxiVNotification('https://discord.com/api/webhooks/1187768399602917427/SaOwJSSj2yBLbfXyZaEqSgvA-TFDLw_b3i6Lb8chE1-K_SSwL72iPqFDG96juHZdOmSY')
+    noti.run()
 

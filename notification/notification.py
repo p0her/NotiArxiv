@@ -1,4 +1,3 @@
-import time
 import hashlib
 import asyncio
 from chzzkAPI.chzzk import Chzzk
@@ -41,8 +40,44 @@ class ArxiVNotification(object):
         ]
         return webhook_message
     
+    def generate_cafe_noti_message(self, name, avatar_url, title, announcement_url, color, author, thumbnail_url = None):
+        webhook_message = {}
+        webhook_message['username'] = name
+        webhook_message['avatar_url'] = avatar_url
+        webhook_message['embeds'] = [
+            {
+                'author': {
+                    'name': f'{author}'
+                },
+                'title': f'{title}',
+                'url': f'{announcement_url}',
+                'color': color,
+            }
+        ]
+        if thumbnail_url is not None:
+            webhook_message['embeds'][0]['image'] = {
+                'url': f'{thumbnail_url}'
+            }
+
+        return webhook_message
+    
     def get_cafe_noti_message(self):
-        None
+        announcement_list = self.cafe.get_announcement()
+        announcement = announcement_list[0]
+        writer, title, announcement_url = announcement[0], announcement[1], announcement[2]
+        avatar_url = getattr(ProfileUrl, self.dictName[writer]).value
+        color = getattr(ColorID, self.dictName[writer]).value
+        urls_split = announcement_url.split('&')
+        article_id = 0
+        for param in urls_split:
+            if 'articleid' in param:
+                article_id = int(param.split('=')[1])
+                break
+        thumbnail_url = self.cafe.get_img_src('godanssity', article_id)
+        author = '📺 방송 공지'
+        ret = self.generate_cafe_noti_message(writer, avatar_url, title, announcement_url, color, author, thumbnail_url)
+        return ret
+
 
     def get_chzzk_noti_message(self):
         is_live = [0 for i in range(len(self.chzzk_id))]
@@ -76,6 +111,7 @@ class ArxiVNotification(object):
         viewer_counts = [0 for i in range(len(self.afreeca_id))]
         broad_urls = ['' for i in range(len(self.afreeca_id))]
         thumbnail_urls = ['' for i in range(len(self.afreeca_id))]
+        broad_no = [0 for i in range(len(self.afreeca_id))]
         ret = [False for i in range(len(self.afreeca_id))]
         idx = [i for i in range(len(self.afreeca_id))]
 
@@ -87,7 +123,8 @@ class ArxiVNotification(object):
             if not is_live[i]: continue
             titles[i] = self.afreeca.get_broad_title(user_id)
             viewer_counts[i] = self.afreeca.get_broad_current_viewer(user_id)
-            broad_urls[i] = self.afreeca.get_broad_url(user_id)
+            broad_no[i] = self.afreeca.get_broad_no(user_id)
+            broad_urls[i] = self.afreeca.get_broad_url(user_id, broad_no[i])
             thumbnail_urls[i] = self.afreeca.get_thumbnail_url(user_id)
 
         for (i, user_id, name, color, avatar_url) in zip(idx, self.afreeca_id, UserName, self.color, ProfileUrl):
@@ -141,8 +178,12 @@ class ArxiVNotification(object):
             if x is not False:
                 self.bot.send_afreeca_live_on_message(x)
             
+    def cafe_noti_run(self):
+        cafe_noti_message = self.get_cafe_noti_message()
+        self.bot.send_cafe_announcement_message(cafe_noti_message)
+
     def run(self):
-        #self.cafe_noti_run() 
+        self.cafe_noti_run()
         self.chzzk_noti_run()
         self.afreeca_noti_run()
         self.twitch_noti_run()

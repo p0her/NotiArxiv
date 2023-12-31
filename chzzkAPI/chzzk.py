@@ -4,8 +4,8 @@ import requests
 
 class Chzzk(object):
     def __init__(self):
-        print('Chzzk')
-        
+        None
+
     def _get_live_status(self, user_id):
         live_status_response = requests.get(get_live_status_url(user_id))
         return live_status_response.json()

@@ -4,7 +4,6 @@ from .helper import get_stream_announcement_url
 import requests
 class Cafe:
     def __init__(self):
-        print('Cafe')
         self.announcement_url = get_stream_announcement_url()
         options = webdriver.ChromeOptions()
         options.add_argument("headless")

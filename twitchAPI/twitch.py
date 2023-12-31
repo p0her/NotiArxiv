@@ -3,6 +3,7 @@ import requests
 
 class Twitch:
     def __init__(self):
+        print('twitch')
         self.headers = {
             'Client-id': '3u2bps8wk79a8e16h9ln1zxt9k41ob',
             'Authorization' : 'Bearer ' + 'eoasqa7ais7tzuhznkvgd9599sil4y'

@@ -1,22 +1,17 @@
-import hashlib
-import asyncio
 from chzzkAPI.chzzk import Chzzk
 from afreecaAPI.afreeca import Afreeca
 from cafeAPI.cafe import Cafe
 from twitchAPI.twitch import Twitch
 from type import ChzzkUserID, UserName, ProfileUrl, ColorID, AfreecaUserID, TwitchUserID
-from discordBot.app import DiscordBot
 
 REQUEST_TIME = 10
 
 class ArxiVNotification(object):
-    def __init__(self, webhook_url: str):
-        self.chzzk = Chzzk()
-        self.bot = DiscordBot(webhook_url)
-        self.cafe = Cafe()
-        self.afreeca = Afreeca()
-        self.twitch = Twitch()
-        self.webhook_url = webhook_url
+    def __init__(self, chzzk, cafe, afreeca, twitch):
+        self.chzzk = chzzk
+        self.cafe = cafe
+        self.afreeca = afreeca
+        self.twitch = twitch
         self.color = ColorID
         self.dictName = {'한결':'HANGYEOL', '여르미':'YEORUMI', '비몽':'BEEMONG', '우사미':'U32', '에뇨':'ENYO', '샤르망':'CHARMANTE'}
         self.twitch_id = [x.value for x in TwitchUserID]
@@ -159,31 +154,3 @@ class ArxiVNotification(object):
             ret[i] = self.generate_noti_message(name.value, avatar_url.value, f'{name.value} 뱅온', titles[i], broad_urls[i], color.value, thumbnail_urls[i])
 
         return ret
-    
-    def twitch_noti_run(self):
-        twitch_noti_message = self.get_twitch_noti_message()
-        for x in twitch_noti_message:
-            if x is not False:
-                self.bot.send_twitch_live_on_message(x)
-
-    def chzzk_noti_run(self):
-        chzzk_noti_message = self.get_chzzk_noti_message()
-        for x in chzzk_noti_message:
-            if x is not False:
-                self.bot.send_chzzk_live_on_message(x)
-
-    def afreeca_noti_run(self):
-        afreeca_noti_message = self.get_afreeca_noti_message()
-        for x in afreeca_noti_message:
-            if x is not False:
-                self.bot.send_afreeca_live_on_message(x)
-            
-    def cafe_noti_run(self):
-        cafe_noti_message = self.get_cafe_noti_message()
-        self.bot.send_cafe_announcement_message(cafe_noti_message)
-
-    def run(self):
-        self.cafe_noti_run()
-        self.chzzk_noti_run()
-        self.afreeca_noti_run()
-        self.twitch_noti_run()

@@ -4,8 +4,8 @@ import json
 
 class Afreeca:
     def __init__(self):
-        None
-
+        print('Afreeca')
+        
     def _get_live_status(self, user_id):
         live_detail_response = requests.get(get_station_api_url(user_id), headers = {'User-Agent': 'Mozilla/5.0'})
         return live_detail_response.json()

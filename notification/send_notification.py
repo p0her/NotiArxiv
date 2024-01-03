@@ -26,12 +26,12 @@ class SendNotification(object):
     async def cafe_noti_run(self, cafe_noti_message):
         await self.bot.send_cafe_announcement_message(cafe_noti_message)
 
-    async def run(self, twitch_noti_message, chzzk_noti_message, afreeca_noti_message, cafe_noti_message, is_new_twitch_log, is_new_chzzk_log, is_new_afreeca_log, is_new_cafe_log):
-        if is_new_twitch_log:
+    async def run(self, twitch_noti_message, chzzk_noti_message, afreeca_noti_message, cafe_noti_message, is_twitch_logging, is_chzzk_logging, is_afreeca_logging, is_cafe_logging):
+        if is_twitch_logging:
             await self.twitch_noti_run(twitch_noti_message)
-        if is_new_chzzk_log:
+        if is_chzzk_logging:
             await self.chzzk_noti_run(chzzk_noti_message)
-        if is_new_afreeca_log:
+        if is_afreeca_logging:
             await self.afreeca_noti_run(afreeca_noti_message)
-        if is_new_cafe_log:
+        if is_cafe_logging:
             await self.cafe_noti_run(cafe_noti_message)

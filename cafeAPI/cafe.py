@@ -2,6 +2,8 @@ from selenium import webdriver
 from bs4 import BeautifulSoup
 from .helper import get_stream_announcement_url
 import requests
+import logging
+
 class Cafe:
     def __init__(self):
         self.announcement_url = get_stream_announcement_url()

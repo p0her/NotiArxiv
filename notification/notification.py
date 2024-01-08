@@ -1,9 +1,7 @@
-from chzzkAPI.chzzk import Chzzk
 from afreecaAPI.afreeca import Afreeca
 from cafeAPI.cafe import Cafe
-from twitchAPI.twitch import Twitch
-from type import ChzzkUserID, UserName, ProfileUrl, ColorID, AfreecaUserID, TwitchUserID
-
+from type import UserName, ProfileUrl, ColorID, AfreecaUserID
+import logging
 REQUEST_TIME = 10
 
 class ArxiVNotification(object):
@@ -13,10 +11,8 @@ class ArxiVNotification(object):
         self.afreeca = afreeca
         self.twitch = twitch
         self.color = ColorID
-        self.dictName = {'한결':'HANGYEOL', '여르미':'YEORUMI', '비몽':'BEEMONG', '우사미':'U32', '에뇨':'ENYO', '샤르망':'CHARMANTE'}
-        self.twitch_id = [x.value for x in TwitchUserID]
+        self.dictName = {'한결':'HANGYEOL', '여르미':'YEORUMI', '비몽':'BEEMONG', 'u32':'U32', '에뇨':'ENYO', '샤르망':'CHARMANTE', '고단씨': 'GODANSSI'}
         self.afreeca_id = [x.value for x in AfreecaUserID]
-        self.chzzk_id = [x.value for x in ChzzkUserID]
 
     def generate_noti_message(self, name, avatar_url, title, description, stream_url, color, image_url):
         webhook_message = {}
@@ -73,33 +69,6 @@ class ArxiVNotification(object):
         ret = self.generate_cafe_noti_message(writer, avatar_url, title, announcement_url, color, author, thumbnail_url)
         return ret
 
-
-    def get_chzzk_noti_message(self):
-        is_live = [0 for i in range(len(self.chzzk_id))]
-        titles = ['' for i in range(len(self.chzzk_id))]
-        viewer_counts = [0 for i in range(len(self.chzzk_id))]
-        broad_urls = ['' for i in range(len(self.chzzk_id))]
-        thumbnail_urls = ['' for i in range(len(self.chzzk_id))]
-        ret = [False for i in range(len(self.chzzk_id))]
-        idx = [i for i in range(len(self.chzzk_id))]
-
-        for i, user_id in enumerate(self.chzzk_id):
-            if self.chzzk.is_streamer_live(user_id):
-                is_live[i] = True
-                
-        for i, user_id in enumerate(self.chzzk_id):
-            if not is_live[i]: continue
-            titles[i] = self.chzzk.get_live_title(user_id)
-            viewer_counts[i] = self.chzzk.get_live_user_count(user_id)
-            broad_urls[i] = self.chzzk.get_live_link(user_id)
-            thumbnail_urls[i] = self.chzzk.get_live_thumbnail(user_id)
-
-        for (i, user_id, name, color, avatar_url) in zip(idx, self.chzzk_id, UserName, self.color, ProfileUrl):
-            if not is_live[i]: continue
-            ret[i] = self.generate_noti_message(name.value, avatar_url.value, f'{name.value} 뱅온', titles[i], broad_urls[i], color.value, thumbnail_urls[i])
-        
-        return ret
-
     def get_afreeca_noti_message(self):
         is_live = [0 for i in range(len(self.afreeca_id))]
         titles = ['' for i in range(len(self.afreeca_id))]
@@ -120,7 +89,7 @@ class ArxiVNotification(object):
             viewer_counts[i] = self.afreeca.get_broad_current_viewer(user_id)
             broad_no[i] = self.afreeca.get_broad_no(user_id)
             broad_urls[i] = self.afreeca.get_broad_url(user_id, broad_no[i])
-            thumbnail_urls[i] = self.afreeca.get_thumbnail_url(user_id)
+            thumbnail_urls[i] = self.afreeca.get_thumbnail_url(broad_no[i])
 
         for (i, user_id, name, color, avatar_url) in zip(idx, self.afreeca_id, UserName, self.color, ProfileUrl):
             if not is_live[i]: continue
@@ -128,29 +97,5 @@ class ArxiVNotification(object):
         
         return ret
     
-    def get_twitch_noti_message(self):
-        is_live = [0 for i in range(len(self.twitch_id))]
-        titles = ['' for i in range(len(self.twitch_id))]
-        viewer_counts = [0 for i in range(len(self.twitch_id))]
-        broad_urls = ['' for i in range(len(self.twitch_id))]
-        thumbnail_urls = ['' for i in range(len(self.twitch_id))]
-        ret = [False for i in range(len(self.twitch_id))]
-        idx = [i for i in range(len(self.twitch_id))]
-
-        for i, user_id in enumerate(self.twitch_id):
-            if self.twitch.is_stream(user_id):
-                is_live[i] = True
-
-        for i, user_id in enumerate(self.twitch_id):
-            if not is_live[i]: continue
-            stream_information = self.twitch.get_stream_information(user_id)[0]
-            titles[i] = self.twitch.get_title(stream_information)
-            viewer_counts[i] = self.twitch.get_viewer_count(stream_information)
-            broad_urls[i] = self.twitch.get_broad_url(user_id)
-            thumbnail_urls[i] = self.twitch.get_thumbnail_url(stream_information)
-
-        for (i, user_id, name, color, avatar_url) in zip(idx, self.twitch_id, UserName, self.color, ProfileUrl):
-            if not is_live[i]: continue
-            ret[i] = self.generate_noti_message(name.value, avatar_url.value, f'{name.value} 뱅온', titles[i], broad_urls[i], color.value, thumbnail_urls[i])
-
-        return ret
+    def get_youtube_noti_message(self):
+        None

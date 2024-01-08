@@ -1,14 +1,5 @@
 from enum import Enum
 
-class ChzzkUserID(Enum):
-    ID_HANGYEOL = '9f16e0bfbb7a9ee1fdabce002047b82b'
-    ID_YEORUMI = '726482d31891e0808d6289e2497791fc'
-    ID_BEEMONG = '39c3d49d1e1becc865f42ee251329766'
-    ID_U32 = '60ddec4bc4beab3fbf4f7c2d1aa7d70d'
-    ID_ENYO = 'UNDEFINED_ENYO' # todo : chzzk URL update
-    ID_CHARMANTE = 'UNDEFINED_CHARMANTE' # todo : chzzk URL update
-    ID_GODANSSI = 'UNDEFINED_GODANSSI'
-    
 class UserName(Enum):
     HANGYEOL = '한결'
     YEORUMI = '여르미'
@@ -40,16 +31,34 @@ class AfreecaUserID(Enum):
     HANGYEOL = 'kaksjak0730'
     YEORUMI = 'yeorumi030'
     BEEMONG = 'beemong'
+    U32 = 'u3ams2'
+    ENYO = 'nakaivenyo'
+    CHARMANTE = 'owozzz'
+    GODANSSI = 'ghdtjdwns813'
+
+class YoutubeUserID(Enum):
+    HANGYEOL = 'UCluZa5CRH783-eU22_N7f7w'
+    YEORUMI = 'UC9UBS38T2wKKbEKgPFdAoFQ'
+    BEEMONG = 'UCnWEtTLqxplJccIRh3sFjJg'
+    U32 =  'UCjsSt2r6DMjNlN6X4TjCc0g'
+    ENYO = 'UCduZ7VkJD2_zWC_Sw61WzGA'
+    CHARMANTE = 'UCiWqkt4_1wzWtvCuUAe0fTA'
+    GODANSSI = 'UCCNIKF7tOs3aeYeFudkwFng'
+
+class YoutubeReplayUserID(Enum):
+    HANGYEOL = 'UC6forhu1WLjBfnsj5jGMTNg'
+    YEORUMI = 'UC1i0ljmUYx1WaMkB11bV73A'
+    BEEMONG = 'UC-PEEzHOQCgAA2X96WAndpg'
+    U32 = 'UCTadusbDjUfO3KGFL3UEg_A'
+    ENYO = 'UCquGeCHX1cuf1Gad7rsdNcA'
+    CHARMANTE = 'UC-Q-L_gwoOYsppZ3d8z1uJA'
+    GODANSSI = 'UCTQOk-T48mOz7-KE64ZFS5g'
+
+class YoutubeClipUserID(Enum):
+    HANGYEOL = 'UNDEFINED_HANGYEOL'
+    YEORUMI = 'UCzAGJWuH3aUHPqjHpllJ5RA'
+    BEEMONG = 'UNDEFINED_BEEMONG'
     U32 = 'UNDEFINED_U32'
     ENYO = 'UNDEFINED_ENYO'
     CHARMANTE = 'UNDEFINED_CHARMANTE'
     GODANSSI = 'UNDEFINED_GODANSSI'
-
-class TwitchUserID(Enum):
-    HANGYEOL = 'hangyeol8008'
-    YEORUMI = 'yeorumi030'
-    BEEMONG = 'beemong_'
-    U32 = 'u32__'
-    ENYO = 'enyo_sekai'
-    CHARMANTE = '0owo0__'
-    GODANSSI = 'godan9184'

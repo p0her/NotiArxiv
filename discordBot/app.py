@@ -1,4 +1,3 @@
-from chzzkAPI.chzzk import Chzzk
 from .type import Status
 import requests
 import aiohttp
@@ -16,15 +15,7 @@ class DiscordBot(object):
     async def send_cafe_announcement_message(self, webhook_message: dict) -> requests.Response:
         async with aiohttp.ClientSession() as session:
             await session.post(self.webhook_url, json=webhook_message)
-  
-    async def send_chzzk_live_on_message(self, webhook_message: dict) -> requests.Response:
-        async with aiohttp.ClientSession() as session:
-            await session.post(self.webhook_url, json=webhook_message)
 
     async def send_afreeca_live_on_message(self, webhook_message: dict) -> requests.Response:
         async with aiohttp.ClientSession() as session:
-            await session.post(self.webhook_url, json=webhook_message)
-        
-    async def send_twitch_live_on_message(self, webhook_message: dict) -> requests.Response:
-       async with aiohttp.ClientSession() as session:
             await session.post(self.webhook_url, json=webhook_message)

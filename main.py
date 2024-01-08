@@ -12,17 +12,34 @@ import discord
 import os
 
 load_dotenv()
-BOT_TOKEN = os.getenv("BOT_TOKEN")
+BOT_TOKEN = os.getenv('BOT_TOKEN')
+MEMBER_COUNT = os.getenv('MEMBER_COUNT')
+class Dropdown(discord.ui.Select):  
+    def __init__(self):
+        options = [
+            discord.SelectOption(label='한결', default=True),
+            discord.SelectOption(label='여르미', default=True),
+            discord.SelectOption(label='비몽', default=True),
+            discord.SelectOption(label='우사미', default=True),
+            discord.SelectOption(label='에뇨', default=True),
+            discord.SelectOption(label='샤르망', default=True),
+            discord.SelectOption(label='고단씨', default=True),
+        ]
+        super().__init__(min_values=1, max_values=MEMBER_COUNT, options=options, row=2)
+        
+    async def callback(self, interaction: discord.Interaction):
+        await interaction.response.send_message(f'{interaction.data['values']}')
 
 class MemberConfig(discord.ui.View):
     def __init__(self):
         super().__init__(timeout=120)
+        self.add_item(Dropdown())
 
     @discord.ui.button(label='primary', style=discord.ButtonStyle.primary, row=1)
     async def button1(self, interaction: discord.Interaction, button: discord.ui.Button):
-        await interaction.response.send_message('button1')
-
-
+        msg = ''
+        print(self.children)
+        await interaction.response.send_message(f'asdf')
 intents = discord.Intents.default()
 intents.message_content = True
 

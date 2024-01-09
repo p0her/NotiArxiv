@@ -8,15 +8,20 @@ from dotenv import load_dotenv
 #from youtubeAPI.youtube import Youtube
 import asyncio
 import discord
+import psycopg2
 
 import os
 
 load_dotenv()
 BOT_TOKEN = os.getenv('BOT_TOKEN')
 MEMBER_COUNT = os.getenv('MEMBER_COUNT')
-class Dropdown(discord.ui.Select):  
-    def __init__(self):
-        options = [
+HOST = os.getenv('HOST')
+DBNAME = os.getenv('DBNAME')
+USER, PASSWORD = os.getenv('USER'), os.getenv('PASSWORD')
+PORT = os.getenv('PORT')
+
+conn = psycopg2.connect(host=HOST, dbname=DBNAME, user=USER, password=PASSWORD, port=PORT)
+options = [
             discord.SelectOption(label='한결', default=True),
             discord.SelectOption(label='여르미', default=True),
             discord.SelectOption(label='비몽', default=True),
@@ -25,21 +30,22 @@ class Dropdown(discord.ui.Select):
             discord.SelectOption(label='샤르망', default=True),
             discord.SelectOption(label='고단씨', default=True),
         ]
-        super().__init__(min_values=1, max_values=MEMBER_COUNT, options=options, row=2)
-        
-    async def callback(self, interaction: discord.Interaction):
-        await interaction.response.send_message(f'{interaction.data['values']}')
 
 class MemberConfig(discord.ui.View):
     def __init__(self):
         super().__init__(timeout=120)
-        self.add_item(Dropdown())
+        self.member_checked = [False for i in range(int(MEMBER_COUNT))]
+        self.member_idx = {'한결': 0, '여르미': 1, '비몽': 2, '우사미': 3, '에뇨': 4, '샤르망': 5, '고단씨': 6}
+    @discord.ui.select(min_values=1, options=options, max_values=int(MEMBER_COUNT), row=2)
+    async def select_option_callback(self, interaction: discord.Interaction, select: discord.ui.Select):
+        for value in interaction.data['values']:
+            self.member_checked[self.member_idx[value]] = True 
+        await interaction.response.send_message('')
 
-    @discord.ui.button(label='primary', style=discord.ButtonStyle.primary, row=1)
+    @discord.ui.button(label='✅ 설정하기', style=discord.ButtonStyle.primary, row=1)
     async def button1(self, interaction: discord.Interaction, button: discord.ui.Button):
-        msg = ''
-        print(self.children)
-        await interaction.response.send_message(f'asdf')
+        await interaction.response.send_message(f'{interaction.data}')
+
 intents = discord.Intents.default()
 intents.message_content = True
 
